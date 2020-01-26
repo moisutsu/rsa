@@ -1,3 +1,7 @@
+extern crate rsa;
+
 fn main() {
-    println!("Hello, world!");
+    rsa::encode();
+    rsa::decode();
+    rsa::generate();
 }

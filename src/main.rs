@@ -13,13 +13,15 @@ fn main() {
             .long("encode")
             .value_name("String")
             .requires("key")
-            .conflicts_with_all(&["decode", "generate"]))
+            .conflicts_with_all(&["decode", "generate"])
+            .required_unless_one(&["decode", "generate"]))
         .arg(Arg::with_name("decode")
             .short("d")
             .long("decode")
             .value_name("String")
             .requires("key")
-            .conflicts_with("generate"))
+            .conflicts_with("generate")
+            .required_unless("generate"))
         .arg(Arg::with_name("key")
             .short("k")
             .long("key")
@@ -38,7 +40,5 @@ fn main() {
         rsa::decode(ctx, key);
     } else if matches.is_present("generate") {
         rsa::generate();
-    } else {
-        println!("Input arguments!");
     }
 }

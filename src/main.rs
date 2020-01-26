@@ -30,12 +30,12 @@ fn main() {
             .long("generate"))
         .get_matches();
 
-    if let Some(v) = matches.value_of("encode") {
-        rsa::encode();
-        println!("key: {}", v);
-    } else if let Some(v) = matches.value_of("decode") {
-        rsa::decode();
-        println!("key: {}", v);
+    if let Some(ctx) = matches.value_of("encode") {
+        let key = matches.value_of("key").unwrap();
+        rsa::encode(ctx, key);
+    } else if let Some(ctx) = matches.value_of("decode") {
+        let key = matches.value_of("key").unwrap();
+        rsa::decode(ctx, key);
     } else if matches.is_present("generate") {
         rsa::generate();
     } else {

@@ -3,6 +3,10 @@ use rand::Rng;
 
 pub fn generate() {
     println!("generate");
+    println!("{}", generate_prime());
+}
+
+fn generate_prime() -> u32 {
     let mut x;
     loop {
         x = generate_integer();
@@ -10,7 +14,7 @@ pub fn generate() {
             break;
         }
     }
-    println!("{}", x);
+    x
 }
 
 fn generate_integer() -> u32 {

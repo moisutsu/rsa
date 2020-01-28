@@ -11,33 +11,39 @@ fn main() {
         .arg(Arg::with_name("encode")
             .short("e")
             .long("encode")
-            .value_name("String")
-            .requires("key")
+            .value_name("Key")
+            .requires_all(&["n", "string"])
             .conflicts_with_all(&["decode", "generate"])
             .required_unless_one(&["decode", "generate"]))
         .arg(Arg::with_name("decode")
             .short("d")
             .long("decode")
-            .value_name("String")
-            .requires("key")
-            .conflicts_with("generate")
-            .required_unless("generate"))
-        .arg(Arg::with_name("key")
-            .short("k")
-            .long("key")
             .value_name("Key")
+            .requires_all(&["n", "string"])
+            .conflicts_with_all(&["encode", "generate"])
+            .required_unless_one(&["encode", "generate"]))
+        .arg(Arg::with_name("n")
+            .short("n")
+            .value_name("Key")
+            .conflicts_with("generate"))
+        .arg(Arg::with_name("string")
+            .short("s")
+            .long("string")
+            .value_name("Text")
             .conflicts_with("generate"))
         .arg(Arg::with_name("generate")
             .short("g")
             .long("generate"))
         .get_matches();
 
-    if let Some(ctx) = matches.value_of("encode") {
-        let key = matches.value_of("key").unwrap();
-        rsa::encode(ctx, key);
-    } else if let Some(ctx) = matches.value_of("decode") {
-        let key = matches.value_of("key").unwrap();
-        rsa::decode(ctx, key);
+    if let Some(e) = matches.value_of("encode") {
+        let n = matches.value_of("n").unwrap();
+        let text = matches.value_of("string").unwrap();
+        rsa::encode(e, n, text);
+    } else if let Some(d) = matches.value_of("decode") {
+        let n = matches.value_of("n").unwrap();
+        let text = matches.value_of("string").unwrap();
+        rsa::decode(d, n, text);
     } else if matches.is_present("generate") {
         rsa::generate();
     }

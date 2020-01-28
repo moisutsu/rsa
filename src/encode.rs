@@ -1,4 +1,4 @@
-pub fn encode(ctx: &str, key: &str) {
+pub fn encode(e: &str, n: &str, text: &str) {
     println!("encode");
-    println!("ctx: {}, key: {}", ctx, key);
+    println!("e: {}, n: {}, text: {}", e, n, text);
 }

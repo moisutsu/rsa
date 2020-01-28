@@ -1,4 +1,4 @@
-pub fn decode(ctx: &str, key: &str) {
+pub fn decode(d: &str, n: &str, text: &str) {
     println!("decode");
-    println!("ctx: {}, key: {}", ctx, key);
+    println!("d: {}, n: {}, text: {}", d, n, text);
 }

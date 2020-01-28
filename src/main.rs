@@ -37,13 +37,13 @@ fn main() {
         .get_matches();
 
     if let Some(e) = matches.value_of("encode") {
-        let n = matches.value_of("n").unwrap();
+        let n: u128 = matches.value_of("n").unwrap().parse().unwrap();
         let text = matches.value_of("string").unwrap();
-        rsa::encode(e, n, text);
+        rsa::encode(e.parse().unwrap(), n, text);
     } else if let Some(d) = matches.value_of("decode") {
-        let n = matches.value_of("n").unwrap();
+        let n = matches.value_of("n").unwrap().parse().unwrap();
         let text = matches.value_of("string").unwrap();
-        rsa::decode(d, n, text);
+        rsa::decode(d.parse().unwrap(), n, text);
     } else if matches.is_present("generate") {
         rsa::generate();
     }

@@ -1,11 +1,21 @@
 use crate::bytes;
+use rug::{Integer, ops::Pow};
 
 pub fn encode(e: u128, n: u128, text: &str) {
-    println!("encode");
-    let bytes= text.as_bytes();
-    println!("{:?}", bytes);
-    // println!("{}", String::from_utf8(bytes.to_vec()).unwrap());
-    let x = bytes::to_int(bytes);
-    println!("{}", x);
-    println!("{:?}", &bytes::from_int(x));
+    let bytes = text.as_bytes();
+    let x = Integer::from(bytes::to_int(bytes));
+    let cryptogram = x.pow(e as u32) % n;
+    println!("{}", unsafe {String::from_utf8_unchecked(bytes::from_int(integer_to_int(cryptogram)).to_vec())});
+}
+
+fn integer_to_int(x: Integer) -> u128 {
+    let mut t = x;
+    let mut r: u128 = 0;
+    loop {
+        r += if t.clone() % 2 == 1 {1} else {0};
+        r <<= 1;
+        t >>= 1;
+        if t == 0 {break;}
+    }
+    r
 }

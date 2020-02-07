@@ -1,16 +1,17 @@
-CONTEXT = Hello
-E = 5
-D = 3307189001887676048
-N = 14882350516239957559
+PLAIN = 5
+CRYPT = eZ
+E = 3
+D = 3763
+N = 22879
 
 generate: build
 	./target/debug/rsa --generate
 
 encode: build
-	./target/debug/rsa -e $(E) -n $(N) -s $(CONTEXT)
+	./target/debug/rsa -e $(E) -n $(N) -s $(PLAIN)
 
 decode: build
-	./target/debug/rsa -d $(D) -n $(N) -s $(CONTEXT)
+	./target/debug/rsa -d $(D) -n $(N) -s $(CRYPT)
 
 build:
 	cargo build

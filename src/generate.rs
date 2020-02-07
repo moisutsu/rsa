@@ -4,6 +4,7 @@ use rand::Rng;
 pub fn generate() {
     let p = generate_prime();
     let q = generate_prime();
+    println!("p={}, q={}", p, q);
     let n = p * q;
     let l = lcm(p - 1, q - 1);
     let e = generate_e(l);
@@ -19,7 +20,7 @@ fn generate_d(l: u128, e: u128) -> u128 {
     let mut i = 1;
     loop {
         if (i * l + 1) % e == 0 {
-            return (i * l + 1) / 3;
+            return (i * l + 1) / e;
         }
         i += 1;
     }
@@ -45,21 +46,21 @@ fn generate_prime() -> u128 {
     x as u128
 }
 
-fn generate_integer() -> u32 {
-    let mut x: i32 = rand::thread_rng().gen();
+fn generate_integer() -> u8 {
+    let mut x: i8 = rand::thread_rng().gen();
     x = if x < 0 {x} else {-x};
-    let y: u32 = x as u32;
+    let y: u8 = x as u8;
     if y % 2 == 0 {y + 1} else {y}
 }
 
-fn is_prime(num: u32) -> bool {
+fn is_prime(num: u8) -> bool {
     if num == 2 {
         return true
     }
     if num < 2 || num & 1 == 0 {
         return false
     }
-    let upper_limit = (num as f64).sqrt() as u32 + 1;
+    let upper_limit = (num as f64).sqrt() as u8 + 1;
     for i in (3..upper_limit).step_by(2) {
         if num % i == 0 {
             return false

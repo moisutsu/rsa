@@ -1,50 +1,84 @@
-extern crate rsa;
-extern crate clap;
+use clap::Clap;
+use rsa::Opt;
+use std::ops::*;
 
-use clap::{Arg, App};
-
+#[allow(clippy::clippy::many_single_char_names)]
 fn main() {
-    let matches = App::new("rsa")
-        .version("1.0")
-        .author("j-hira")
-        .about("RSA encryption tool.")
-        .arg(Arg::with_name("encode")
-            .short("e")
-            .long("encode")
-            .value_name("Key")
-            .requires_all(&["n", "string"])
-            .conflicts_with_all(&["decode", "generate"])
-            .required_unless_one(&["decode", "generate"]))
-        .arg(Arg::with_name("decode")
-            .short("d")
-            .long("decode")
-            .value_name("Key")
-            .requires_all(&["n", "string"])
-            .conflicts_with_all(&["encode", "generate"])
-            .required_unless_one(&["encode", "generate"]))
-        .arg(Arg::with_name("n")
-            .short("n")
-            .value_name("Key")
-            .conflicts_with("generate"))
-        .arg(Arg::with_name("string")
-            .short("s")
-            .long("string")
-            .value_name("Text")
-            .conflicts_with("generate"))
-        .arg(Arg::with_name("generate")
-            .short("g")
-            .long("generate"))
-        .get_matches();
+    let opt = Opt::parse();
 
-    if let Some(e) = matches.value_of("encode") {
-        let n: u128 = matches.value_of("n").unwrap().parse().unwrap();
-        let text = matches.value_of("string").unwrap();
-        rsa::encode(e.parse().unwrap(), n, text);
-    } else if let Some(d) = matches.value_of("decode") {
-        let n = matches.value_of("n").unwrap().parse().unwrap();
-        let text = matches.value_of("string").unwrap();
-        rsa::decode(d.parse().unwrap(), n, text);
-    } else if matches.is_present("generate") {
-        rsa::generate();
+    let p = opt.p;
+    let q = opt.q;
+    let n = p * q;
+    let l = (p - 1) * (q - 1);
+    let m = opt.plaintext;
+    println!("Plaintext = {}", m);
+    println!("p = {}, q = {}", p, q);
+
+    let e = generate_e(l);
+    let d = generate_d(l, e);
+    println!("EncryptionKey = (e: {}, n: {})", e, n);
+    println!("DecryptionKey = (d: {}, n: {})", d, n);
+
+    let c = encode(m, e, n);
+    println!("Cryptogram = {}", c);
+
+    let m = decode(c, d, n);
+    println!("DecryptedText = {}", m);
+}
+
+macro_rules! mod_pow {
+    ($ a : expr , $ n : expr , $ mod : expr ) => {{
+        let mut ret = 1;
+        let mut a = $a;
+        let mut n = $n;
+        while n > 0 {
+            if n & 1 == 1 {
+                ret = ret * a % $mod;
+            }
+            a = a * a % $mod;
+            n >>= 1;
+        }
+        ret
+    }};
+}
+
+fn encode(m: u128, e: u128, n: u128) -> u128 {
+    mod_pow!(m, e, n)
+}
+
+fn decode(c: u128, d: u128, n: u128) -> u128 {
+    mod_pow!(c, d, n)
+}
+
+fn generate_d(l: u128, e: u128) -> u128 {
+    let mut i = 1;
+    loop {
+        if (i * l + 1) % e == 0 {
+            return (i * l + 1) / e;
+        }
+        i += 1;
     }
+}
+
+fn generate_e(l: u128) -> u128 {
+    for i in 2..l - 1 {
+        if gcd(i, l) == 1 {
+            return i;
+        }
+    }
+    0
+}
+
+fn gcd<T>(a: T, b: T) -> T
+where
+    T: Copy + Default + Ord + Sub<Output = T> + Rem<Output = T>,
+{
+    let (mut a, mut b) = if a < b { (b, a) } else { (a, b) };
+    let zero = T::default();
+    while b > zero {
+        let r = a % b;
+        a = b;
+        b = r;
+    }
+    a
 }

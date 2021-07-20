@@ -51,13 +51,12 @@ fn decode(c: u128, d: u128, n: u128) -> u128 {
 }
 
 fn generate_d(l: u128, e: u128) -> u128 {
-    let mut i = 1;
-    loop {
+    for i in 1.. {
         if (i * l + 1) % e == 0 {
             return (i * l + 1) / e;
         }
-        i += 1;
     }
+    unreachable!()
 }
 
 fn generate_e(l: u128) -> u128 {
@@ -66,7 +65,7 @@ fn generate_e(l: u128) -> u128 {
             return i;
         }
     }
-    0
+    unreachable!()
 }
 
 fn gcd<T>(a: T, b: T) -> T
